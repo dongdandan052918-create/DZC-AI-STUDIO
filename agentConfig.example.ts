@@ -1,6 +1,6 @@
 export const agentConfig = {
     // 1. AI应用名称
-    appName: "ViVa AI 短视频助手",
+    appName: "ViVa AI短视频助手",
     
     // 2. 系统设置界面的BASE URL地址（调用API的地址）
     baseUrl: "https://www.vivaapi.cn",

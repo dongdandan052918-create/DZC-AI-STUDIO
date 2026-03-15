@@ -954,18 +954,18 @@ function App() {
       <header className="border-b-4 border-black bg-[#FACC15] sticky top-0 z-[100] shadow-sm">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-             <Bot size={44} className="text-black" strokeWidth={2.5} />
+             <Bot size={56} className="text-black" strokeWidth={2.5} />
              <h1 className="font-sans font-black text-4xl tracking-wider text-black uppercase">{agentConfig.appName}</h1>
           </div>
           <div className="flex items-center gap-6 relative z-[101]">
-              <button onClick={() => setShowConfigModal(true)} className="text-black hover:text-red-600 transition-colors" title="System Config">
+              <button onClick={() => setShowConfigModal(true)} className="text-black hover:text-red-600 transition-colors" title="系统设置">
                  <Settings size={40} strokeWidth={2} />
               </button>
 
               <button 
                 onClick={() => setShowPricingModal(true)}
                 className="text-black hover:text-red-600 transition-colors" 
-                title="PRICE DESC(价格说明)"
+                title="价格说明"
               >
                 <BadgeDollarSign size={40} strokeWidth={2} />
               </button>
@@ -973,7 +973,7 @@ function App() {
               <button 
                   onClick={() => setShowSupportModal(true)} 
                   className="text-black hover:text-red-600 transition-colors" 
-                  title="Contact Support"
+                  title="联系客服"
               >
                  <MessageCircleQuestion size={40} strokeWidth={2} />
               </button>
@@ -981,7 +981,7 @@ function App() {
               <button 
                   onClick={() => window.open(`${baseUrlInput}/console/log`, '_blank')}
                   className="text-black hover:text-red-600 transition-colors"
-                  title="USAGE LOGS(使用日志)"
+                  title="使用日志"
               >
                   <History size={40} strokeWidth={2} />
               </button>
@@ -1012,7 +1012,7 @@ function App() {
               <div className="bg-white border-4 border-black w-full max-w-2xl relative animate-in zoom-in duration-200">
                   <div className="bg-[#FACC15] border-b-4 border-black p-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                          <MessageCircleQuestion className="w-6 h-6 text-black" strokeWidth={2.5} />
+                          <MessageCircleQuestion className="w-8 h-8 text-black" strokeWidth={2.5} />
                           <h2 className="text-3xl font-black text-black tracking-wide font-sans uppercase">联系客服 / SUPPORT</h2>
                       </div>
                       <button 
@@ -1145,7 +1145,7 @@ function App() {
                    {/* Header */}
                    <div className="bg-[#FACC15] border-b-4 border-black p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <Settings className="w-6 h-6 text-black" strokeWidth={2.5} />
+                            <Settings className="w-8 h-8 text-black" strokeWidth={2.5} />
                             <h2 className="text-3xl font-black text-black tracking-wide font-sans uppercase">系统设置 / SETTINGS</h2>
                         </div>
                         {/* Close Button - Integrated into header */}
