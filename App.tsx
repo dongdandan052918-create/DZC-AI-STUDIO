@@ -11,7 +11,7 @@ import LoadingOverlay from './components/LoadingOverlay';
 import PricingModal from './components/PricingModal';
 import { Sparkles, AlertCircle, Upload, User, Trash2, Plus, Settings, CheckCircle2, XCircle, Wifi, Clapperboard, BookOpen, Camera, ArrowRight, RefreshCw, MapPin, Wand2, Clock, Maximize2, Download, Monitor, ChevronRight, PenTool, ShoppingBag, Brain, MessageCircleQuestion, BadgeDollarSign, History, ExternalLink, AlertTriangle, FileText, Database, DollarSign, Loader2, Image, Zap, Link2, Film, Bot, X, Eye, EyeOff, Save, Copy, Music } from 'lucide-react';
 import { clsx } from 'clsx';
-import { agentConfig } from './src/agentConfig';
+import { agentConfig } from './agentConfig';
 
 // Helper for concurrency
 async function runConcurrent<T>(

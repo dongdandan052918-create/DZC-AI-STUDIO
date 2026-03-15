@@ -6,7 +6,7 @@ import { RefreshCw, Download, Maximize2, Wand2, X, Archive, AlertTriangle, Image
 import { clsx } from 'clsx';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
-import { agentConfig } from '../src/agentConfig';
+import { agentConfig } from '../agentConfig';
 
 const getBaseUrl = () => {
     if (typeof window !== 'undefined') {

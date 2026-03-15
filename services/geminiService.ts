@@ -3,7 +3,7 @@
 import { GoogleGenAI, Type, Schema, Modality } from "@google/genai";
 import { Scene, AssetItem, ChatMessage, ScriptOption, VideoModel } from "../types";
 import { AI_SCREENWRITER_INSTRUCTION, SHOT_FLOW_KB, VISUAL_STYLE_KB, EDITING_ANALYSIS_KB } from "../constants";
-import { agentConfig } from '../src/agentConfig';
+import { agentConfig } from '../agentConfig';
 
 // Helper to add WAV header to raw PCM data
 const addWavHeader = (pcmData: Uint8Array, sampleRate: number): Uint8Array => {

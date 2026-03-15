@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, BadgeDollarSign } from 'lucide-react';
-import { agentConfig } from '../src/agentConfig';
+import { agentConfig } from '../agentConfig';
 
 interface PricingModalProps {
   onClose: () => void;
