@@ -3,7 +3,7 @@ export const agentConfig = {
     appName: "DZC AI短视频助手",
     
     // 2. 系统设置界面的BASE URL地址（调用API的地址）
-    baseUrl: "https://m.danzhichen.com",
+    baseUrl: "https://ai.danzhichen.com",
     
     // 3. 价格系数，本应用价格是按系数0.7设置的
     priceCoefficient: 1.0,
