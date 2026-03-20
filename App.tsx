@@ -1,7 +1,7 @@
 
 
 import React, { useState, useRef, useEffect } from 'react';
-import { get, set } from 'idb-keyval';
+import { get, set, clear } from 'idb-keyval';
 import { AppStep, Scene, StyleOption, AssetItem, ScriptCategory, ScriptTemplate, ScriptOption, VideoModel } from './types';
 import { STYLES, SCRIPT_CATEGORIES, getValidDurations } from './constants';
 import { generateScript, generateSceneImage, extractAssetsFromScript, setCustomConfig, testApiConnection, generateAssetImage, generateTopicIdeas, generateScriptByScenes, generateAllEpisodes, generateVideo, editSceneImage, generateAudio, generateMissingScenePrompt } from './services/geminiService';
@@ -779,7 +779,7 @@ function App() {
     const sessionId = ++generateTopicsSession.current;
     setIsGeneratingTopics(true);
     try {
-        const ideas = await generateTopicIdeas(selectedCategory.name, selectedTemplate.name, selectedTemplate.description || "", "", textModel);
+        const ideas = await generateTopicIdeas(selectedCategory.name, selectedTemplate.name, selectedTemplate.description, "", textModel);
         if (generateTopicsSession.current !== sessionId) return; // Cancelled
         
         setTopicSuggestions(ideas);
@@ -809,7 +809,7 @@ function App() {
     setLoadingMessage(`AI is writing and optimizing your script for all episodes...`);
     setError(null);
     try {
-        const result = await generateAllEpisodes(topic, stylePrompt, styleNameCn, selectedTemplate!.name, selectedTemplate!.description || "", episodeDuration, parseInt(episodeCount) || 1, sceneCount, aspectRatio, textModel);
+        const result = await generateAllEpisodes(topic, stylePrompt, styleNameCn, selectedTemplate!.name, selectedTemplate!.description, episodeDuration, parseInt(episodeCount) || 1, sceneCount, aspectRatio, textModel);
         if (loadingSession.current !== sessionId) return;
 
         const newEpisodesScript: Record<number, string> = {};
@@ -1258,6 +1258,13 @@ function App() {
     }
   };
 
+  const resetAppData = async () => {
+      console.log("Reset button clicked - executing directly due to sandbox restrictions");
+      localStorage.clear();
+      await clear();
+      window.location.reload();
+  };
+
   const handleSaveConfig = () => {
       if(apiKeyInput.trim() || apiKey2Input.trim()) {
           setCustomConfig(apiKeyInput.trim(), baseUrlInput.trim(), apiKey2Input.trim(), activeKeyIndex);
@@ -1583,7 +1590,7 @@ function App() {
           <div className="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4">
               <div className="bg-white border-4 border-black w-full max-w-2xl relative animate-in zoom-in duration-200">
                    {/* Header */}
-                   <div className="bg-[#FACC15] border-b-4 border-black p-4 flex items-center justify-between">
+                   <div className="bg-[#FACC15] border-b-4 border-black p-3 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Settings className="w-8 h-8 text-black" strokeWidth={2.5} />
                             <h2 className="text-3xl font-black text-black tracking-wide font-sans uppercase">系统设置 / SETTINGS</h2>
@@ -1597,9 +1604,9 @@ function App() {
                         </button>
                    </div>
                    
-                   <div className="p-8 space-y-6">
+                   <div className="p-6 space-y-4">
                       {/* Base URL Input */}
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                           <label className="text-base font-black text-black flex items-center justify-between">
                                <a href={`${baseUrlInput}/console/token`} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
                                    API令牌获取地址 <ExternalLink size={16} />
@@ -1613,12 +1620,12 @@ function App() {
                               value={baseUrlInput} 
                               onChange={(e) => setBaseUrlInput(e.target.value)} 
                               placeholder={agentConfig.baseUrl}
-                              className="w-full bg-[#FFFBEB] border-2 border-black p-3 font-mono text-lg outline-none focus:bg-white transition-colors"
+                              className="w-full bg-[#FFFBEB] border-2 border-black p-2 font-mono text-lg outline-none focus:bg-white transition-colors"
                           />
                       </div>
 
                       {/* API Key Input 1 */}
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                           <div className="flex items-center justify-between">
                               <label className="text-base font-black text-black">
                                   API令牌 1 (KEY 1)
@@ -1637,7 +1644,7 @@ function App() {
                                 value={apiKeyInput} 
                                 onChange={e => setApiKeyInput(e.target.value)} 
                                 className={clsx(
-                                    "w-full border-2 border-black p-3 font-mono text-lg outline-none transition-colors tracking-widest pr-12",
+                                    "w-full border-2 border-black p-2 font-mono text-lg outline-none transition-colors tracking-widest pr-12",
                                     activeKeyIndex === 1 ? "bg-[#FFFBEB]" : "bg-gray-50 opacity-70"
                                 )}
                                 placeholder="sk-..."
@@ -1653,7 +1660,7 @@ function App() {
                       </div>
 
                       {/* API Key Input 2 */}
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                           <div className="flex items-center justify-between">
                               <label className="text-base font-black text-black">
                                   API令牌 2 (KEY 2)
@@ -1672,7 +1679,7 @@ function App() {
                                 value={apiKey2Input} 
                                 onChange={e => setApiKey2Input(e.target.value)} 
                                 className={clsx(
-                                    "w-full border-2 border-black p-3 font-mono text-lg outline-none transition-colors tracking-widest pr-12",
+                                    "w-full border-2 border-black p-2 font-mono text-lg outline-none transition-colors tracking-widest pr-12",
                                     activeKeyIndex === 2 ? "bg-[#FFFBEB]" : "bg-gray-50 opacity-70"
                                 )}
                                 placeholder="sk-..."
@@ -1690,10 +1697,19 @@ function App() {
                       {/* Save Button */}
                       <button 
                           onClick={handleSaveConfig} 
-                          className="w-full bg-[#FACC15] text-black border-2 border-black py-4 font-black text-lg tracking-wide uppercase hover:translate-y-1 transition-all mt-4 flex items-center justify-center gap-2"
+                          className="w-full bg-[#FACC15] text-black border-2 border-black py-2.5 font-black text-lg tracking-wide uppercase hover:translate-y-1 transition-all mt-2 flex items-center justify-center gap-2"
                       >
                           <Save size={20} strokeWidth={2.5} />
                           保存设置/SAVE SETTINGS
+                      </button>
+
+                      {/* Reset Button */}
+                      <button 
+                          onClick={resetAppData} 
+                          className="w-full bg-[#EF4444] text-white border-2 border-black py-2.5 font-black text-lg tracking-wide uppercase hover:translate-y-1 transition-all mt-2 flex items-center justify-center gap-2"
+                      >
+                          <Trash2 size={20} strokeWidth={2.5} />
+                          重置应用数据/RESET DATA
                       </button>
                    </div>
               </div>
@@ -1868,12 +1884,6 @@ function App() {
                             </button>
                         ))}
                     </div>
-                    {selectedTemplate && (
-                        <div className="mt-4 p-4 bg-[#FACC15] border-2 border-black text-black font-sans text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
-                            <span className="font-black uppercase mr-2">THEME FOCUS / 题材核心:</span>
-                            {selectedTemplate.description}
-                        </div>
-                    )}
                 </div>
             )}
 
