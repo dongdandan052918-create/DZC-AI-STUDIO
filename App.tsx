@@ -176,6 +176,26 @@ const AssetSlot: React.FC<AssetSlotProps> = ({
   );
 }
 
+const isAssetInScene = (assetName: string, scene: Scene, isCharacter: boolean = false) => {
+  if (!assetName) return false;
+  const name = assetName.toLowerCase();
+  
+  if (scene.script?.toLowerCase().includes(name) ||
+      scene.visualPrompt?.toLowerCase().includes(name) ||
+      scene.videoPrompt?.toLowerCase().includes(name)) {
+      return true;
+  }
+  
+  if (isCharacter && scene.character) {
+      const charNames = scene.character.split(/[,，、\s]+/).map(n => n.trim().toLowerCase()).filter(Boolean);
+      if (charNames.some(n => name.includes(n) || n.includes(name))) {
+          return true;
+      }
+  }
+  
+  return false;
+};
+
 function App() {
   const [step, setStep] = useState<AppStep>(AppStep.INPUT);
   const [topic, setTopic] = useState('');
@@ -661,12 +681,7 @@ function App() {
       let prompt = scene.videoPrompt || scene.visualPrompt || scene.script;
       
       // Filter characters to only include those mentioned in this scene to improve consistency
-      const sceneCharacters = characters.filter(c => 
-          scene.character?.includes(c.name) || 
-          scene.script?.includes(c.name) ||
-          scene.visualPrompt?.includes(c.name) ||
-          scene.videoPrompt?.includes(c.name)
-      );
+      const sceneCharacters = characters.filter(c => isAssetInScene(c.name, scene, true));
 
       if (sceneCharacters.length > 0) {
           prompt += `\n\n[Character Visual Mapping - Use this to identify characters in the image]`;
@@ -888,18 +903,9 @@ function App() {
               if (loadingSession.current !== sessionId) return;
               try {
                   const promptToUse = scene.visualPrompt || scene.script;
-                  const sceneCharacters = characters.filter(c => 
-                      scene.character?.includes(c.name) || 
-                      scene.script?.includes(c.name) ||
-                      scene.visualPrompt?.includes(c.name) ||
-                      scene.videoPrompt?.includes(c.name)
-                  );
+                  const sceneCharacters = characters.filter(c => isAssetInScene(c.name, scene, true));
 
-                  const sceneLocations = coreScenes.filter(s => 
-                      scene.script?.includes(s.name) ||
-                      scene.visualPrompt?.includes(s.name) ||
-                      scene.videoPrompt?.includes(s.name)
-                  );
+                  const sceneLocations = coreScenes.filter(s => isAssetInScene(s.name, scene, false));
                   
                   const b64 = await generateSceneImage(promptToUse, scene.cameraPrompt || '', sceneCharacters, sceneLocations.length > 0 ? sceneLocations : coreScenes, aspectRatio, scene.sceneReferenceImages || [], assetModel, getFullStyleModifier());
                   
@@ -1034,18 +1040,9 @@ function App() {
                 const promptToUse = scene.visualPrompt || scene.script;
                 
                 // Filter characters to only include those mentioned in this scene to improve consistency
-                const sceneCharacters = characters.filter(c => 
-                    scene.character?.includes(c.name) || 
-                    scene.script?.includes(c.name) ||
-                    scene.visualPrompt?.includes(c.name) ||
-                    scene.videoPrompt?.includes(c.name)
-                );
+                const sceneCharacters = characters.filter(c => isAssetInScene(c.name, scene, true));
 
-                const sceneLocations = coreScenes.filter(s => 
-                    scene.script?.includes(s.name) ||
-                    scene.visualPrompt?.includes(s.name) ||
-                    scene.videoPrompt?.includes(s.name)
-                );
+                const sceneLocations = coreScenes.filter(s => isAssetInScene(s.name, scene, false));
                 
                 const b64 = await generateSceneImage(promptToUse, scene.cameraPrompt, sceneCharacters, sceneLocations.length > 0 ? sceneLocations : coreScenes, aspectRatio, scene.sceneReferenceImages || [], assetModel, getFullStyleModifier());
                 
@@ -1099,18 +1096,9 @@ function App() {
           // Redraw Logic: prefers visualPrompt
           const promptToUse = scene.visualPrompt || scene.script;
           
-          const sceneCharacters = characters.filter(c => 
-              scene.character?.includes(c.name) || 
-              scene.script?.includes(c.name) ||
-              scene.visualPrompt?.includes(c.name) ||
-              scene.videoPrompt?.includes(c.name)
-          );
+          const sceneCharacters = characters.filter(c => isAssetInScene(c.name, scene, true));
 
-          const sceneLocations = coreScenes.filter(s => 
-              scene.script?.includes(s.name) ||
-              scene.visualPrompt?.includes(s.name) ||
-              scene.videoPrompt?.includes(s.name)
-          );
+          const sceneLocations = coreScenes.filter(s => isAssetInScene(s.name, scene, false));
 
           const b64 = await generateSceneImage(promptToUse, scene.cameraPrompt, sceneCharacters, sceneLocations.length > 0 ? sceneLocations : coreScenes, aspectRatio, refScenesRaw, assetModel, getFullStyleModifier());
           setScenes(prev => {

@@ -360,6 +360,7 @@ export const extractAssetsFromScript = async (script: string): Promise<{ charact
     
     CRITICAL RULES for Characters:
     - ONLY extract characters that appear VISUALLY in the scenes.
+    - EXTRACT THE EXACT NAME used in the script. Do not add descriptive prefixes or suffixes to the name (e.g., if the script says "男子", extract "男子", NOT "相亲男子").
     - DO NOT extract "声音" (voice), "旁白" (narrator), or any non-visual audio elements as characters.
     - For each character, carefully analyze the script context to infer their GENDER, age, and personality.
     - Pay close attention to relationship terms (e.g., "闺蜜" usually implies the protagonist is female, "兄弟" might imply male).
