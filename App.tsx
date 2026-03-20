@@ -156,23 +156,21 @@ const AssetSlot: React.FC<AssetSlotProps> = ({
         <input type="file" ref={inputRef} className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && onUpload(e.target.files[0])} />
       </div>
       
-      <div className="space-y-2">
+      <div className="flex items-center gap-2">
           <input 
             type="text"
             value={asset.name || ''}
             onChange={(e) => onNameChange(e.target.value)}
             placeholder={type === 'character' ? "NAME..." : "PLACE..."}
-            className="w-full bg-[#FFFBEB] border-2 border-black px-3 py-2 font-normal uppercase text-black focus:bg-white outline-none placeholder:text-gray-400 placeholder:normal-case"
+            className="flex-1 min-w-0 bg-[#FFFBEB] border-2 border-black px-3 py-2 font-normal uppercase text-black focus:bg-white outline-none placeholder:text-gray-400 placeholder:normal-case"
           />
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-sm font-normal cursor-pointer select-none hover:text-black text-gray-600 group/chk">
-                <div className={clsx("w-5 h-5 border-2 border-black flex items-center justify-center transition-colors", asset.autoReference !== false ? "bg-[#10B981]" : "bg-white")}>
-                    {asset.autoReference !== false && <Check size={16} className="text-black" strokeWidth={4} />}
-                </div>
-                <input type="checkbox" checked={asset.autoReference !== false} onChange={(e) => onAutoReferenceChange?.(e.target.checked)} className="hidden" />
-                <span className="tracking-wide">自动引用</span>
-            </label>
-          </div>
+          <label className="flex items-center gap-1.5 text-sm font-normal cursor-pointer select-none hover:text-black text-gray-600 group/chk shrink-0">
+              <div className={clsx("w-5 h-5 border-2 border-black flex items-center justify-center transition-colors", asset.autoReference !== false ? "bg-[#10B981]" : "bg-white")}>
+                  {asset.autoReference !== false && <Check size={16} className="text-black" strokeWidth={4} />}
+              </div>
+              <input type="checkbox" checked={asset.autoReference !== false} onChange={(e) => onAutoReferenceChange?.(e.target.checked)} className="hidden" />
+              <span className="tracking-wide">自动引用</span>
+          </label>
       </div>
     </div>
   );
