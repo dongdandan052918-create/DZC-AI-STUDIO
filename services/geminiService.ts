@@ -902,7 +902,8 @@ export const generateSceneImage = async (
     - **Perspective Consistency**: The perspective and vanishing points of the characters MUST match the perspective of the background scene perfectly.
     - **Realistic Proportions**: Maintain accurate real-world scale and proportions between characters and their surroundings. No distorted or impossible sizes.
     - **Camera Facing**: Strictly follow the camera angle instructions. If the prompt implies facing the camera, show the front. If it implies back to camera, show the back.
-    - **Material & Object Continuity**: Pay strict attention to the materials and states of objects. If an object is described as metal, it MUST look like metal. If it is broken, show the broken state accurately.`;
+    - **Material & Object Continuity**: Pay strict attention to the materials and states of objects. If an object is described as metal, it MUST look like metal. If it is broken, show the broken state accurately.
+    - **Collective Terms Mapping**: If the prompt uses collective terms like "一家三口" (family of three), "一家人" (family), or "三人" (three people), you MUST map these terms to the provided character reference images (e.g., "男子", "妻子", "女儿") to maintain visual consistency. Ensure all characters in the group match their respective reference images.`;
 
     if (previousSceneContext) {
         promptInstructions += `\n    - **Contextual Continuity**: The previous scene was: "${previousSceneContext}". Ensure logical visual continuity from the previous scene (e.g., maintain exact materials, clothing damage, object states, and relative positioning).`;

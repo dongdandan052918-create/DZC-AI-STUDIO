@@ -174,16 +174,27 @@ const isAssetInScene = (assetName: string, scene: Scene, isCharacter: boolean = 
   if (!assetName) return false;
   const name = assetName.toLowerCase();
   
-  if (scene.script?.toLowerCase().includes(name) ||
-      scene.visualPrompt?.toLowerCase().includes(name) ||
-      scene.videoPrompt?.toLowerCase().includes(name)) {
+  const script = (scene.script || "").toLowerCase();
+  const visual = (scene.visualPrompt || "").toLowerCase();
+  const video = (scene.videoPrompt || "").toLowerCase();
+  const character = (scene.character || "").toLowerCase();
+
+  if (script.includes(name) || visual.includes(name) || video.includes(name)) {
       return true;
   }
   
-  if (isCharacter && scene.character) {
-      const charNames = scene.character.split(/[,，、\s]+/).map(n => n.trim().toLowerCase()).filter(Boolean);
-      if (charNames.some(n => name.includes(n) || n.includes(name))) {
+  if (isCharacter) {
+      // 增强：处理集体称呼，确保“一家三口”、“一家人”、“三人”等词汇能正确关联到已定义的角色
+      const collectiveTerms = ['一家三口', '一家人', '三人', '全家人', '全家', '父母女儿', '父女', '母女', '夫妻', '一家', '三人行', '大家', '众人'];
+      if (collectiveTerms.some(term => script.includes(term) || visual.includes(term) || video.includes(term) || character.includes(term))) {
           return true;
+      }
+
+      if (scene.character) {
+          const charNames = scene.character.split(/[,，、\s]+/).map(n => n.trim().toLowerCase()).filter(Boolean);
+          if (charNames.some(n => name.includes(n) || n.includes(name))) {
+              return true;
+          }
       }
   }
   
