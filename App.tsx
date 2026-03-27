@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { get, set, clear } from 'idb-keyval';
 import { AppStep, Scene, StyleOption, AssetItem, ScriptCategory, ScriptTemplate, ScriptOption, VideoModel } from './types';
 import { STYLES, SCRIPT_CATEGORIES, getValidDurations } from './constants';
-import { generateScript, generateSceneImage, extractAssetsFromScript, setCustomConfig, testApiConnection, generateAssetImage, generateTopicIdeas, generateScriptByScenes, generateAllEpisodes, generateVideo, editSceneImage, generateAudio, generateMissingScenePrompt } from './services/geminiService';
+import { generateScript, generateSceneImage, extractAssetsFromScript, setCustomConfig, testApiConnection, generateAssetImage, generateTopicIdeas, generateScriptByScenes, generateAllEpisodes, generateVideo, editSceneImage, generateAudio, generateMissingScenePrompt, optimizeScript } from './services/geminiService';
 import StepIndicator from './components/StepIndicator';
 import StoryboardGrid from './components/StoryboardGrid';
 import ScriptEditor from './components/ScriptEditor';
@@ -1039,6 +1039,43 @@ function App() {
       } catch (err: any) {
           if (loadingSession.current !== sessionId) return;
           setError(err.message || 'Finalization failed.');
+      } finally {
+          if (loadingSession.current === sessionId) setLoading(false);
+      }
+  };
+
+  const handleOptimizeAllScripts = async (currentScript: string) => {
+      // First, save the current script to ensure we have the latest edits
+      setEpisodesScript(prev => ({ ...prev, [currentEpisode]: currentScript }));
+      
+      const sessionId = ++loadingSession.current;
+      setLoading(true);
+      setLoadingMessage('正在优化所有集数剧本...');
+      setError(null);
+      
+      try {
+          const updatedScripts = { ...episodesScript, [currentEpisode]: currentScript };
+          const episodeNumbers = Array.from({ length: totalEpisodes }, (_, i) => i + 1);
+          
+          // Use runConcurrent to optimize all scripts concurrently (limit to 3 for rate limits)
+          const episodesToOptimize = episodeNumbers.map(ep => ({ ep, script: updatedScripts[ep] }));
+          
+          await runConcurrent(episodesToOptimize, 3, async (item) => {
+              if (loadingSession.current !== sessionId) return;
+              if (item.script) {
+                  const optimized = await optimizeScript(item.script, textModel);
+                  updatedScripts[item.ep] = optimized;
+              }
+          });
+          
+          if (loadingSession.current !== sessionId) return;
+          
+          setEpisodesScript(updatedScripts);
+          alert("所有集数剧本已优化完成！");
+      } catch (error: any) {
+          if (loadingSession.current !== sessionId) return;
+          console.error("Failed to optimize all scripts:", error);
+          setError("剧本优化失败，请稍后再试。");
       } finally {
           if (loadingSession.current === sessionId) setLoading(false);
       }
@@ -2165,6 +2202,7 @@ function App() {
                totalEpisodes={totalEpisodes}
                onEpisodeChange={setCurrentEpisode}
                textModel={textModel}
+               onOptimizeAll={handleOptimizeAllScripts}
            />
         )}
 
